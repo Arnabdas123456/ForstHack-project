@@ -1,5 +1,22 @@
 import librosa
 import numpy as np
+import scipy.signal
+
+
+def _estimate_tempo(y: np.ndarray, sr: int) -> float:
+    """Estimate tempo robustly across SciPy/librosa version mismatches."""
+    # Older librosa versions call scipy.signal.hann, which moved to scipy.signal.windows.hann.
+    if not hasattr(scipy.signal, "hann") and hasattr(scipy.signal, "windows"):
+        scipy.signal.hann = scipy.signal.windows.hann
+
+    try:
+        tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+        return float(np.squeeze(tempo))
+    except Exception:
+        # Fallback path to avoid hard failures in API requests.
+        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+        tempo = librosa.feature.tempo(onset_envelope=onset_env, sr=sr)
+        return float(np.squeeze(tempo))
 
 
 def analyze_audio(song_path):
@@ -8,7 +25,7 @@ def analyze_audio(song_path):
 
     y, sr = librosa.load(song_path)
 
-    tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
+    tempo = _estimate_tempo(y, sr)
 
     energy = np.mean(np.abs(y))
 

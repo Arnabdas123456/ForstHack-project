@@ -5,23 +5,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
 interface VideoPreviewProps {
-  selectedTheme: string | null
   videoUrl?: string | null
   bannerUrl?: string | null
   isGenerating?: boolean
 }
 
-const themeNames: Record<string, string> = {
-  "anime-nature": "Anime Nature",
-  "rainy-city": "Rainy City",
-  "night-sky": "Night Sky",
-  "cyberpunk-skyline": "Cyberpunk Skyline",
-  "lofi-bedroom": "LoFi Bedroom",
-  "mountain-sunset": "Mountain Sunset",
-}
-
 export function VideoPreview({
-  selectedTheme,
   videoUrl,
   bannerUrl,
   isGenerating = false,
@@ -61,17 +50,7 @@ export function VideoPreview({
         </div>
       </div>
       <CardContent className="p-4">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Preview</span>
-          {selectedTheme && (
-            <Badge
-              variant="secondary"
-              className="bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20"
-            >
-              {themeNames[selectedTheme] || selectedTheme}
-            </Badge>
-          )}
-        </div>
+        <span className="text-sm text-muted-foreground">Preview</span>
       </CardContent>
     </Card>
   )

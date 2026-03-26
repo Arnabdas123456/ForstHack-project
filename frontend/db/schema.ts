@@ -5,6 +5,7 @@ import {
   timestamp,
   uniqueIndex,
   varchar,
+  int,
 } from "drizzle-orm/mysql-core"
 
 export const users = mysqlTable(
@@ -44,13 +45,44 @@ export const sessions = mysqlTable(
   }),
 )
 
-export const usersRelations = relations(users, ({ many }) => ({
-  sessions: many(sessions),
-}))
-
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {
     fields: [sessions.userId],
+    references: [users.id],
+  }),
+}))
+
+export const libraryItems = mysqlTable(
+  "library_items",
+  {
+    id: varchar("id", { length: 36 }).primaryKey(),
+    userId: varchar("user_id", { length: 36 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    title: varchar("title", { length: 255 }).notNull(),
+    theme: varchar("theme", { length: 120 }),
+    mood: varchar("mood", { length: 80 }),
+    songName: varchar("song_name", { length: 255 }),
+    thumbnailUrl: varchar("thumbnail_url", { length: 1024 }),
+    videoUrl: varchar("video_url", { length: 1024 }).notNull(),
+    rating: int("rating").default(0).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => ({
+    libraryItemsUserIdIdx: index("library_items_user_id_idx").on(table.userId),
+    libraryItemsCreatedAtIdx: index("library_items_created_at_idx").on(table.createdAt),
+  }),
+)
+
+export const usersRelations = relations(users, ({ many }) => ({
+  sessions: many(sessions),
+  libraryItems: many(libraryItems),
+}))
+
+export const libraryItemsRelations = relations(libraryItems, ({ one }) => ({
+  user: one(users, {
+    fields: [libraryItems.userId],
     references: [users.id],
   }),
 }))

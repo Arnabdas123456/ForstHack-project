@@ -56,7 +56,7 @@ def _validate_upload(
 async def generate_video(
     request: Request,
     song: UploadFile = File(...),
-    banner: UploadFile = File(...)
+    banner: UploadFile = File(...),
 ):
     """Receive uploads, analyze and produce a video.
 

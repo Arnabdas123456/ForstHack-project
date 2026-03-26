@@ -22,9 +22,9 @@ def create_video(song_path, banner_path, mood):
     overlay_path = f"assets/overlays/{overlay}.mp4"
 
     # video settings
-    fps = 12
-    width = 854
-    height = 480
+    fps = 6
+    width = 640
+    height = 360
 
     print("Resolution:", f"{width}x{height}")
     print("FPS:", fps)

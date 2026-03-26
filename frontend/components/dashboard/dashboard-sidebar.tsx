@@ -1,12 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { LayoutDashboard, Video, Library, Settings, LogOut, Music, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
+import { toast } from "sonner"
+import { logoutUser } from "@/lib/auth/client"
 
 const sidebarLinks = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -17,7 +19,25 @@ const sidebarLinks = [
 
 export function DashboardSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  async function handleLogout() {
+    setIsLoggingOut(true)
+    try {
+      await logoutUser()
+      toast.success("Logged out successfully")
+      router.push("/")
+      router.refresh()
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to log out"
+      toast.error(message)
+    } finally {
+      setIsLoggingOut(false)
+      setMobileOpen(false)
+    }
+  }
 
   return (
     <>
@@ -111,15 +131,15 @@ export function DashboardSidebar() {
               <span className="text-xs text-muted-foreground">Theme</span>
               <ThemeToggle />
             </div>
-            <Link href="/">
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
-              >
-                <LogOut className="h-5 w-5" />
-                Logout
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
+              <LogOut className="h-5 w-5" />
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </Button>
           </div>
         </div>
       </aside>

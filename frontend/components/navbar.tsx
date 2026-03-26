@@ -2,9 +2,11 @@
 
 import Link from "next/link"
 import { Music, Menu, X } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { AUTH_STATE_CHANGED_EVENT, logoutUser } from "@/lib/auth/client"
 
 const navLinks = [
   { href: "/#features", label: "Features" },
@@ -13,45 +15,61 @@ const navLinks = [
 ]
 
 export function Navbar() {
+  const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [userName, setUserName] = useState("")
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  useEffect(() => {
-    let isMounted = true
+  const loadCurrentUser = useCallback(async () => {
+    try {
+      const response = await fetch("/api/auth/me", { cache: "no-store" })
 
-    async function loadCurrentUser() {
-      try {
-        const response = await fetch("/api/auth/me", { cache: "no-store" })
-        if (!isMounted) {
-          return
-        }
-
-        if (!response.ok) {
-          setIsAuthenticated(false)
-          setUserName("")
-          return
-        }
-
-        const data = (await response.json()) as { user?: { name?: string } }
-        const name = data.user?.name?.trim() ?? ""
-        setIsAuthenticated(true)
-        setUserName(name)
-      } catch {
-        if (!isMounted) {
-          return
-        }
+      if (!response.ok) {
         setIsAuthenticated(false)
         setUserName("")
+        return
       }
-    }
 
-    loadCurrentUser()
-
-    return () => {
-      isMounted = false
+      const data = (await response.json()) as { user?: { name?: string } }
+      const name = data.user?.name?.trim() ?? ""
+      setIsAuthenticated(true)
+      setUserName(name)
+    } catch {
+      setIsAuthenticated(false)
+      setUserName("")
     }
   }, [])
+
+  useEffect(() => {
+    loadCurrentUser()
+
+    const handleAuthChanged = () => {
+      loadCurrentUser()
+    }
+
+    window.addEventListener(AUTH_STATE_CHANGED_EVENT, handleAuthChanged)
+
+    return () => {
+      window.removeEventListener(AUTH_STATE_CHANGED_EVENT, handleAuthChanged)
+    }
+  }, [loadCurrentUser])
+
+  async function handleLogout() {
+    setIsAuthenticated(false)
+    setUserName("")
+    setIsLoggingOut(true)
+
+    try {
+      await logoutUser()
+      router.refresh()
+    } catch {
+      await loadCurrentUser()
+    } finally {
+      setIsLoggingOut(false)
+      setMobileMenuOpen(false)
+    }
+  }
 
   const userInitial = useMemo(() => {
     const firstChar = userName.charAt(0)
@@ -98,6 +116,14 @@ export function Navbar() {
                 {userInitial}
               </div>
               {userName ? <span className="text-sm font-medium">{userName}</span> : null}
+              <Button
+                variant="ghost"
+                className="text-sm font-medium"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+              >
+                {isLoggingOut ? "Logging out..." : "Logout"}
+              </Button>
             </div>
           ) : (
             <>
@@ -141,11 +167,21 @@ export function Navbar() {
               </Link>
             ))}
             {isAuthenticated ? (
-              <div className="flex items-center gap-3 pt-4 border-t border-border/40">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-sm font-bold text-white">
-                  {userInitial}
+              <div className="flex flex-col gap-3 pt-4 border-t border-border/40">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-sm font-bold text-white">
+                    {userInitial}
+                  </div>
+                  <span className="text-sm font-medium">{userName || "User"}</span>
                 </div>
-                <span className="text-sm font-medium">{userName || "User"}</span>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={handleLogout}
+                  disabled={isLoggingOut}
+                >
+                  {isLoggingOut ? "Logging out..." : "Logout"}
+                </Button>
               </div>
             ) : (
               <div className="flex flex-col gap-2 pt-4 border-t border-border/40">

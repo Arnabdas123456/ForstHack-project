@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Sparkles, Download, RefreshCw, Upload } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
-import { ThemeSelector } from "@/components/generate/theme-selector"
 import { UploadZone } from "@/components/generate/upload-zone"
 import { MusicUploadZone } from "@/components/generate/music-upload-zone"
 import { VideoPreview } from "@/components/generate/video-preview"
@@ -14,11 +14,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
+import { notifyLibraryChanged } from "@/lib/library/client"
 
 export default function GeneratePage() {
+  const router = useRouter()
   const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
-  const [selectedTheme, setSelectedTheme] = useState<string | null>(null)
   const [videoTitle, setVideoTitle] = useState("")
+  const [videoDescription, setVideoDescription] = useState("")
   const [rating, setRating] = useState(0)
   const [isGenerated, setIsGenerated] = useState(false)
   const [songFile, setSongFile] = useState<File | null>(null)
@@ -27,7 +29,9 @@ export default function GeneratePage() {
   const [generationError, setGenerationError] = useState<string | null>(null)
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null)
   const [generatedBannerUrl, setGeneratedBannerUrl] = useState<string | null>(null)
+  const [generatedMood, setGeneratedMood] = useState<string | null>(null)
   const [localBannerPreviewUrl, setLocalBannerPreviewUrl] = useState<string | null>(null)
+  const [isPublishing, setIsPublishing] = useState(false)
   const previewSectionRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -59,6 +63,7 @@ export default function GeneratePage() {
     setGenerationError(null)
     setIsGenerating(true)
     setGeneratedVideoUrl(null)
+    setGeneratedMood(null)
 
     try {
       const formData = new FormData()
@@ -73,6 +78,7 @@ export default function GeneratePage() {
       const payload = (await response.json()) as {
         video_url?: string
         banner_url?: string
+        mood?: string
         detail?: string
       }
 
@@ -91,6 +97,7 @@ export default function GeneratePage() {
 
       setGeneratedVideoUrl(nextVideoUrl)
       setGeneratedBannerUrl(nextBannerUrl ?? null)
+      setGeneratedMood(payload.mood ?? null)
       setIsGenerated(true)
       toast.success("Video generated successfully")
 
@@ -106,6 +113,57 @@ export default function GeneratePage() {
     }
   }
 
+  const handlePublishToLibrary = async () => {
+    if (!generatedVideoUrl) {
+      toast.error("Generate a video before publishing to your library.")
+      return
+    }
+
+    setIsPublishing(true)
+    try {
+      const response = await fetch("/api/library", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: videoTitle.trim(),
+          thumbnailUrl: generatedBannerUrl || localBannerPreviewUrl || undefined,
+          videoUrl: generatedVideoUrl,
+          createdAt: new Date().toISOString(),
+          songName: songFile?.name,
+          mood: generatedMood || undefined,
+          rating,
+        }),
+      })
+
+      const data = (await response.json()) as {
+        error?: string
+        fieldErrors?: Record<string, string[]>
+      }
+
+      if (!response.ok) {
+        const firstFieldError =
+          data.fieldErrors &&
+          Object.values(data.fieldErrors).find((messages) => messages?.length)?.[0]
+        throw new Error(firstFieldError || data.error || "Unable to publish this video")
+      }
+
+      notifyLibraryChanged()
+      toast.success("Published to My Library")
+      router.push("/library")
+      router.refresh()
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to publish this video"
+      toast.error(message)
+    } finally {
+      setIsPublishing(false)
+    }
+  }
+
+  const isTitleValid = videoTitle.trim().length > 0
+  const canGenerate = isTitleValid && !!songFile && !!bannerFile && !isGenerating
+
   return (
     <DashboardLayout>
       <div className="p-6 lg:p-8">
@@ -113,37 +171,25 @@ export default function GeneratePage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Create Your LoFi Video</h1>
           <p className="mt-1 text-muted-foreground">
-            Choose a theme, add your music, and generate stunning visuals.
+            Add your title, music, and banner, then generate your video.
           </p>
         </div>
 
         {/* Two Column Layout */}
         <div className="grid gap-8 lg:grid-cols-2">
-          {/* Left Side - Theme Selection */}
+          {/* Left Side - Uploads */}
           <div className="space-y-6">
             {/* Upload Section */}
             <Card className="overflow-hidden rounded-2xl border-border/50">
               <CardHeader>
-                <CardTitle>Choose Your Anime Theme</CardTitle>
+                <CardTitle>Upload Your Files</CardTitle>
                 <CardDescription>
-                  Upload your music and banner, or select from our presets
+                  Upload your MP3 and banner image to generate the video
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <MusicUploadZone onFileSelect={setSongFile} />
                 <UploadZone onFileSelect={setBannerFile} />
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">Or choose a preset</span>
-                  </div>
-                </div>
-                <ThemeSelector
-                  selectedTheme={selectedTheme}
-                  onSelectTheme={setSelectedTheme}
-                />
               </CardContent>
             </Card>
           </div>
@@ -164,10 +210,23 @@ export default function GeneratePage() {
                     value={videoTitle}
                     onChange={(e) => setVideoTitle(e.target.value)}
                   />
+                  {!isTitleValid ? (
+                    <p className="text-xs text-red-500">Video title is required to generate.</p>
+                  ) : null}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="video-description">Video Description</Label>
+                  <Textarea
+                    id="video-description"
+                    placeholder="Describe your video..."
+                    rows={3}
+                    value={videoDescription}
+                    onChange={(e) => setVideoDescription(e.target.value)}
+                  />
                 </div>
                 <Button
                   onClick={handleGenerate}
-                  disabled={!selectedTheme || !songFile || !bannerFile || isGenerating}
+                  disabled={!canGenerate}
                   className="w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                   size="lg"
                 >
@@ -180,7 +239,6 @@ export default function GeneratePage() {
 
             {/* Preview */}
             <VideoPreview
-              selectedTheme={selectedTheme}
               videoUrl={generatedVideoUrl}
               bannerUrl={generatedBannerUrl || localBannerPreviewUrl}
               isGenerating={isGenerating}
@@ -252,6 +310,8 @@ export default function GeneratePage() {
                       id="description"
                       placeholder="Describe your video..."
                       rows={3}
+                      value={videoDescription}
+                      onChange={(e) => setVideoDescription(e.target.value)}
                     />
                   </div>
 
@@ -278,9 +338,11 @@ export default function GeneratePage() {
                   <Button
                     className="w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300 hover:scale-105"
                     size="lg"
+                    onClick={handlePublishToLibrary}
+                    disabled={!generatedVideoUrl || isPublishing}
                   >
                     <Upload className="mr-2 h-5 w-5" />
-                    Publish to Library
+                    {isPublishing ? "Publishing..." : "Publish to Library"}
                   </Button>
                 </CardContent>
               </Card>

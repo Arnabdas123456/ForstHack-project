@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AuthCard } from "@/components/auth/auth-card"
+import { notifyAuthStateChanged } from "@/lib/auth/client"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -57,6 +58,7 @@ export default function RegisterPage() {
       }
 
       toast.success("Account created successfully")
+      notifyAuthStateChanged()
       router.push(data.redirectTo || "/")
       router.refresh()
     } catch {

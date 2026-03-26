@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { AuthCard } from "@/components/auth/auth-card"
+import { notifyAuthStateChanged } from "@/lib/auth/client"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -65,6 +66,7 @@ export default function LoginPage() {
       }
 
       toast.success("Logged in successfully")
+      notifyAuthStateChanged()
       router.push(data.redirectTo || "/")
       router.refresh()
     } catch {

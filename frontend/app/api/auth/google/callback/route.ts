@@ -14,6 +14,7 @@ function loginErrorRedirect(origin: string, message: string) {
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const origin = url.origin
+  const envRedirectUri = process.env.GOOGLE_REDIRECT_URI?.trim()
 
   try {
     const code = url.searchParams.get("code")
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
       return loginErrorRedirect(origin, "Invalid OAuth state")
     }
 
-    const redirectUri = `${origin}/api/auth/google/callback`
+    const redirectUri = envRedirectUri || `${origin}/api/auth/google/callback`
 
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
