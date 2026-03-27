@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1773480988648,
+      "tag": "0000_graceful_dark_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1774512000000,
+      "tag": "0001_library_items",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774518000000,
+      "tag": "0002_auth_accounts",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1774600000000,
+      "tag": "0003_ai_video_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1774648800000,
+      "tag": "0004_media_type",
+      "breakpoints": true
+    }
+  ]
+}
