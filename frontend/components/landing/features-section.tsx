@@ -1,4 +1,4 @@
-import { Sparkles, Video, Cloud } from "lucide-react"
+import { Sparkles, Video, Music } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const features = [
@@ -15,10 +15,10 @@ const features = [
       "Simply upload your music and watch as our AI generates stunning, synchronized visuals with smooth animations and transitions.",
   },
   {
-    icon: Cloud,
-    title: "Cloud Library",
+    icon: Music,
+    title: "AI Song Generator",
     description:
-      "Store, manage, and access all your generated videos from anywhere. Share directly to social platforms with one click.",
+      "Write a prompt and our AI generates a matching visual scene and music audio, then combines them into a ready-to-share video tailored to your vibe.",
   },
 ]
 

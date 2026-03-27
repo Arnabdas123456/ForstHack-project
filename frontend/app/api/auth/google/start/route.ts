@@ -14,7 +14,6 @@ export async function GET(request: Request) {
   const url = new URL(request.url)
   const origin = url.origin
   const clientId = process.env.GOOGLE_CLIENT_ID || process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-  const envRedirectUri = process.env.GOOGLE_REDIRECT_URI?.trim()
 
   if (!clientId) {
     return loginErrorRedirect(
@@ -24,7 +23,7 @@ export async function GET(request: Request) {
   }
 
   const state = randomBytes(24).toString("hex")
-  const redirectUri = envRedirectUri || `${origin}/api/auth/google/callback`
+  const redirectUri = `${origin}/api/auth/google/callback`
 
   const cookieStore = await cookies()
   cookieStore.set(GOOGLE_STATE_COOKIE, state, {

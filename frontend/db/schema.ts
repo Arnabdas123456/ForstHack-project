@@ -45,9 +45,37 @@ export const sessions = mysqlTable(
   }),
 )
 
+export const authAccounts = mysqlTable(
+  "auth_accounts",
+  {
+    id: varchar("id", { length: 36 }).primaryKey(),
+    userId: varchar("user_id", { length: 36 })
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    provider: varchar("provider", { length: 32 }).notNull(),
+    providerAccountId: varchar("provider_account_id", { length: 191 }).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  },
+  (table) => ({
+    authAccountsUserIdIdx: index("auth_accounts_user_id_idx").on(table.userId),
+    authAccountsProviderAccountUniqueIdx: uniqueIndex("auth_accounts_provider_account_unique_idx").on(
+      table.provider,
+      table.providerAccountId,
+    ),
+  }),
+)
+
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {
     fields: [sessions.userId],
+    references: [users.id],
+  }),
+}))
+
+export const authAccountsRelations = relations(authAccounts, ({ one }) => ({
+  user: one(users, {
+    fields: [authAccounts.userId],
     references: [users.id],
   }),
 }))
@@ -60,12 +88,15 @@ export const libraryItems = mysqlTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     title: varchar("title", { length: 255 }).notNull(),
+    description: varchar("description", { length: 1024 }),
+    tags: varchar("tags", { length: 512 }),
     theme: varchar("theme", { length: 120 }),
     mood: varchar("mood", { length: 80 }),
     songName: varchar("song_name", { length: 255 }),
     thumbnailUrl: varchar("thumbnail_url", { length: 1024 }),
     videoUrl: varchar("video_url", { length: 1024 }).notNull(),
     rating: int("rating").default(0).notNull(),
+    isInLibrary: int("is_in_library").default(1).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
   },
@@ -77,6 +108,7 @@ export const libraryItems = mysqlTable(
 
 export const usersRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
+  authAccounts: many(authAccounts),
   libraryItems: many(libraryItems),
 }))
 

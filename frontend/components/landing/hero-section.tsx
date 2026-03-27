@@ -1,7 +1,3 @@
-import Link from "next/link"
-import { Play, ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-
 export function HeroSection() {
   return (
     <section className="relative overflow-hidden">
@@ -33,27 +29,6 @@ export function HeroSection() {
             Generate stunning anime-style music videos in seconds. Just upload your track, 
             choose a theme, and let our AI create mesmerizing visuals.
           </p>
-
-          {/* CTAs */}
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link href="/register">
-              <Button
-                size="lg"
-                className="group bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300 hover:scale-105 shadow-lg shadow-purple-500/25"
-              >
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-            <Button
-              size="lg"
-              variant="outline"
-              className="group transition-all duration-300 hover:scale-105"
-            >
-              <Play className="mr-2 h-4 w-4" />
-              Watch Demo
-            </Button>
-          </div>
 
           {/* Stats */}
           <div className="mt-16 grid grid-cols-3 gap-8 border-t border-border/40 pt-8">

@@ -18,7 +18,7 @@ export function Footer() {
               <Music className="h-4 w-4 text-white" />
             </div>
             <span className="text-lg font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-              AI LoFi
+              VibeVerse.ai
             </span>
           </Link>
 
@@ -39,7 +39,7 @@ export function Footer() {
 
         <div className="mt-8 border-t border-border/40 pt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} AI LoFi. All rights reserved.
+            &copy; {new Date().getFullYear()} VibeVerse.ai. All rights reserved.
           </p>
         </div>
       </div>

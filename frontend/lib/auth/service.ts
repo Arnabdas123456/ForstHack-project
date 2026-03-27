@@ -1,7 +1,7 @@
 import { randomBytes, randomUUID } from "node:crypto"
 import { and, eq, isNull } from "drizzle-orm"
 import { db } from "@/config/db"
-import { sessions, users } from "@/db/schema"
+import { authAccounts, sessions, users } from "@/db/schema"
 import { hashPassword, verifyPassword } from "@/lib/auth/password"
 import {
   createSessionToken,
@@ -104,28 +104,58 @@ export async function loginUser(
 }
 
 export async function loginOrRegisterGoogleUser(
-  input: { email: string; name?: string | null; avatarUrl?: string | null },
+  input: {
+    email: string
+    providerAccountId: string
+    name?: string | null
+    avatarUrl?: string | null
+  },
   metadata: { userAgent?: string | null; ip?: string | null },
 ) {
   const email = input.email.trim().toLowerCase()
+  const provider = "google"
+  const providerAccountId = input.providerAccountId.trim()
 
-  if (!email) {
-    throw new AuthError("Google account email is missing", 400)
+  if (!email || !providerAccountId) {
+    throw new AuthError("Google account details are missing", 400)
   }
 
-  const existing = await db
+  const linked = await db
     .select({
       id: users.id,
       deletedAt: users.deletedAt,
     })
-    .from(users)
-    .where(eq(users.email, email))
+    .from(authAccounts)
+    .innerJoin(users, eq(authAccounts.userId, users.id))
+    .where(
+      and(
+        eq(authAccounts.provider, provider),
+        eq(authAccounts.providerAccountId, providerAccountId),
+      ),
+    )
     .limit(1)
 
-  let userId = existing[0]?.id
-
-  if (existing[0]?.deletedAt) {
+  if (linked[0]?.deletedAt) {
     throw new AuthError("This account is not available", 403)
+  }
+
+  let userId = linked[0]?.id
+
+  if (!userId) {
+    const existing = await db
+      .select({
+        id: users.id,
+        deletedAt: users.deletedAt,
+      })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1)
+
+    if (existing[0]?.deletedAt) {
+      throw new AuthError("This account is not available", 403)
+    }
+
+    userId = existing[0]?.id
   }
 
   if (!userId) {
@@ -138,6 +168,26 @@ export async function loginOrRegisterGoogleUser(
       email,
       password: hashPassword(generatedPassword),
       avatarUrl: input.avatarUrl?.slice(0, 512),
+    })
+  }
+
+  const existingProviderLink = await db
+    .select({ id: authAccounts.id })
+    .from(authAccounts)
+    .where(
+      and(
+        eq(authAccounts.provider, provider),
+        eq(authAccounts.providerAccountId, providerAccountId),
+      ),
+    )
+    .limit(1)
+
+  if (!existingProviderLink[0]) {
+    await db.insert(authAccounts).values({
+      id: randomUUID(),
+      userId,
+      provider,
+      providerAccountId,
     })
   }
 

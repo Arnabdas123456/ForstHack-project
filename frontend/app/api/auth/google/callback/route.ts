@@ -14,7 +14,6 @@ function loginErrorRedirect(origin: string, message: string) {
 export async function GET(request: Request) {
   const url = new URL(request.url)
   const origin = url.origin
-  const envRedirectUri = process.env.GOOGLE_REDIRECT_URI?.trim()
 
   try {
     const code = url.searchParams.get("code")
@@ -42,7 +41,7 @@ export async function GET(request: Request) {
       return loginErrorRedirect(origin, "Invalid OAuth state")
     }
 
-    const redirectUri = envRedirectUri || `${origin}/api/auth/google/callback`
+    const redirectUri = `${origin}/api/auth/google/callback`
 
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
@@ -89,6 +88,7 @@ export async function GET(request: Request) {
 
     const profile = (await verifyResponse.json()) as {
       aud?: string
+      sub?: string
       email?: string
       email_verified?: string
       name?: string
@@ -99,7 +99,7 @@ export async function GET(request: Request) {
       return loginErrorRedirect(origin, "Invalid Google audience")
     }
 
-    if (!profile.email || profile.email_verified !== "true") {
+    if (!profile.sub || !profile.email || profile.email_verified !== "true") {
       return loginErrorRedirect(origin, "Google email is not verified")
     }
 
@@ -110,6 +110,7 @@ export async function GET(request: Request) {
     const { sessionId, expireAt } = await loginOrRegisterGoogleUser(
       {
         email: profile.email,
+        providerAccountId: profile.sub,
         name: profile.name,
         avatarUrl: profile.picture,
       },

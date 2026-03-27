@@ -11,12 +11,15 @@ import { LIBRARY_CHANGED_EVENT, notifyLibraryChanged } from "@/lib/library/clien
 type LibraryItem = {
   id: string
   title: string
+  description: string | null
+  tags: string | null
   theme: string | null
   mood: string | null
   songName: string | null
   thumbnailUrl: string | null
   videoUrl: string
   rating: number
+  isInLibrary: number
   createdAt: string
   userId: string
 }
@@ -35,13 +38,15 @@ export default function LibraryPage() {
 
     try {
       const response = await fetch("/api/library", { cache: "no-store" })
-      const data = (await response.json()) as { error?: string; items?: LibraryItem[] }
+      const data = (await response
+        .json()
+        .catch(() => ({}))) as { error?: string; items?: LibraryItem[] }
 
       if (!response.ok) {
         throw new Error(data.error || "Unable to load library")
       }
 
-      setItems(data.items || [])
+      setItems(Array.isArray(data.items) ? data.items : [])
     } catch (loadError) {
       const message = loadError instanceof Error ? loadError.message : "Unable to load library"
       setError(message)
@@ -71,8 +76,11 @@ export default function LibraryPage() {
         const normalizedQuery = searchQuery.toLowerCase()
         return (
           video.title.toLowerCase().includes(normalizedQuery) ||
+          (video.description || "").toLowerCase().includes(normalizedQuery) ||
+          (video.tags || "").toLowerCase().includes(normalizedQuery) ||
           (video.theme || "").toLowerCase().includes(normalizedQuery) ||
-          (video.songName || "").toLowerCase().includes(normalizedQuery)
+          (video.songName || "").toLowerCase().includes(normalizedQuery) ||
+          (video.mood || "").toLowerCase().includes(normalizedQuery)
         )
       }),
     [items, searchQuery],
@@ -124,7 +132,7 @@ export default function LibraryPage() {
       const blob = await response.blob()
       const objectUrl = URL.createObjectURL(blob)
       const anchor = document.createElement("a")
-      const pathname = new URL(item.videoUrl).pathname
+      const pathname = new URL(item.videoUrl, window.location.origin).pathname
       const pathFilename = pathname.split("/").pop() || "video.mp4"
       const extension = pathFilename.includes(".") ? "" : ".mp4"
       const sanitizedTitle = item.title.trim().replace(/[^a-zA-Z0-9-_]+/g, "-")
@@ -178,13 +186,15 @@ export default function LibraryPage() {
             </button>
           </div>
         ) : filteredVideos.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredVideos.map((video) => (
               <LibraryVideoCard
                 key={video.id}
                 title={video.title}
+                description={video.description}
                 theme={video.theme || video.mood || "LoFi"}
                 rating={video.rating}
+                videoUrl={video.videoUrl}
                 thumbnail={video.thumbnailUrl}
                 createdAt={video.createdAt}
                 songName={video.songName}

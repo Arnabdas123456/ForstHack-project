@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { LayoutDashboard, Video, Library, Settings, LogOut, Music, Menu, X } from "lucide-react"
+import { LayoutDashboard, Video, Library, Settings, LogOut, Music, Menu, X, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
@@ -12,6 +12,7 @@ import { logoutUser } from "@/lib/auth/client"
 
 const sidebarLinks = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/ai-song-generator", icon: Sparkles, label: "AI Song Generator" },
   { href: "/generate", icon: Video, label: "Generate Video" },
   { href: "/library", icon: Library, label: "My Library" },
   { href: "/settings", icon: Settings, label: "Settings" },
@@ -48,7 +49,7 @@ export function DashboardSidebar() {
             <Music className="h-4 w-4 text-white" />
           </div>
           <span className="text-lg font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-            AI LoFi
+            VibeVerse.ai
           </span>
         </Link>
         <div className="flex items-center gap-2">
@@ -90,7 +91,7 @@ export function DashboardSidebar() {
               <Music className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-              AI LoFi
+              VibeVerse.ai
             </span>
           </Link>
 

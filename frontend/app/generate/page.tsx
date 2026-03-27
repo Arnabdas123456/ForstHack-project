@@ -94,12 +94,39 @@ export default function GeneratePage() {
       const nextBannerUrl = payload.banner_url
         ? normalizeUrl(payload.banner_url)
         : localBannerPreviewUrl
+      const uploadToastId = toast.loading("Saving generated video to UploadThing...")
 
-      setGeneratedVideoUrl(nextVideoUrl)
+      let storedVideoUrl = nextVideoUrl
+      try {
+        const uploadResponse = await fetch("/api/uploadthing/video", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            videoUrl: nextVideoUrl,
+          }),
+        })
+
+        const uploadPayload = (await uploadResponse.json()) as {
+          url?: string
+          error?: string
+        }
+
+        if (!uploadResponse.ok || !uploadPayload.url) {
+          throw new Error(uploadPayload.error || "Unable to store video in UploadThing")
+        }
+
+        storedVideoUrl = uploadPayload.url
+      } finally {
+        toast.dismiss(uploadToastId)
+      }
+
+      setGeneratedVideoUrl(storedVideoUrl)
       setGeneratedBannerUrl(nextBannerUrl ?? null)
       setGeneratedMood(payload.mood ?? null)
       setIsGenerated(true)
-      toast.success("Video generated successfully")
+      toast.success("Video generated and stored successfully")
 
       requestAnimationFrame(() => {
         previewSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })

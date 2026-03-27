@@ -15,6 +15,20 @@
       "when": 1774512000000,
       "tag": "0001_library_items",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1774518000000,
+      "tag": "0002_auth_accounts",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1774600000000,
+      "tag": "0003_ai_video_fields",
+      "breakpoints": true
     }
   ]
 }

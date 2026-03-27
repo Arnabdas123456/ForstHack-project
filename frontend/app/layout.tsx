@@ -1,15 +1,12 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
 export const metadata: Metadata = {
-  title: 'AI LoFi - Turn Your Music into AI-Powered LoFi Videos',
-  description: 'Generate stunning anime-style music videos in seconds with AI-powered theme matching and auto video generation.',
+  title: "VibeVerse.ai - Turn Your Music into AI-Powered Videos",
+  description: "Generate stunning AI-powered music videos in seconds from your prompts.",
   generator: 'v0.app',
   icons: {
     icon: '/logo.jpg',
@@ -32,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
