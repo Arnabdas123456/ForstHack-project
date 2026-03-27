@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Sparkles, Download, RefreshCw, Upload } from "lucide-react"
+import { Sparkles, Download, RefreshCw, Upload, Video } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard/dashboard-layout"
 import { UploadZone } from "@/components/generate/upload-zone"
 import { MusicUploadZone } from "@/components/generate/music-upload-zone"
@@ -193,78 +193,73 @@ export default function GeneratePage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 lg:p-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Create Your LoFi Video</h1>
-          <p className="mt-1 text-muted-foreground">
-            Add your title, music, and banner, then generate your video.
-          </p>
-        </div>
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+        <section className="spotlight rounded-3xl border border-sky-200/20 bg-slate-900/55 p-6 shadow-[0_24px_45px_rgba(2,6,23,0.45)] backdrop-blur-xl sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-sky-200/80">Video Forge</p>
+              <h1 className="mt-2 text-3xl font-semibold text-slate-100 sm:text-4xl">Create Your LoFi Video</h1>
+              <p className="mt-2 max-w-3xl text-sm text-slate-300/85 sm:text-base">
+                Upload music and banner assets, generate an AI-composed visual loop, then finalize and publish in one seamless flow.
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-2xl border border-sky-200/20 bg-slate-900/55 px-4 py-2 text-xs uppercase tracking-[0.15em] text-sky-100">
+              <Video className="h-4 w-4" />
+              Production Mode
+            </div>
+          </div>
+        </section>
 
-        {/* Two Column Layout */}
         <div className="grid gap-8 lg:grid-cols-2">
-          {/* Left Side - Uploads */}
           <div className="space-y-6">
-            {/* Upload Section */}
-            <Card className="overflow-hidden rounded-2xl border-border/50">
-              <CardHeader>
-                <CardTitle>Upload Your Files</CardTitle>
-                <CardDescription>
-                  Upload your MP3 and banner image to generate the video
+            <Card className="overflow-hidden rounded-3xl border-sky-200/20 py-0">
+              <CardHeader className="border-b border-white/10 pb-5 pt-6">
+                <CardTitle className="text-lg text-slate-100">Upload Source Files</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Provide an MP3 and a banner image to generate your cinematic loop.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-6 p-5">
                 <MusicUploadZone onFileSelect={setSongFile} />
                 <UploadZone onFileSelect={setBannerFile} />
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Side - Settings & Preview */}
           <div className="space-y-6">
-            {/* Video Settings */}
-            <Card className="overflow-hidden rounded-2xl border-border/50">
-              <CardHeader>
-                <CardTitle>Video Settings</CardTitle>
+            <Card className="overflow-hidden rounded-3xl border-sky-200/20 py-0">
+              <CardHeader className="border-b border-white/10 pb-5 pt-6">
+                <CardTitle className="text-lg text-slate-100">Render Settings</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-5">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Video Title</Label>
+                  <Label htmlFor="title" className="text-slate-200">Video Title</Label>
                   <Input
                     id="title"
-                    placeholder="Enter your video title"
+                    placeholder="Late Night Skyline"
                     value={videoTitle}
                     onChange={(e) => setVideoTitle(e.target.value)}
                   />
-                  {!isTitleValid ? (
-                    <p className="text-xs text-red-500">Video title is required to generate.</p>
-                  ) : null}
+                  {!isTitleValid ? <p className="text-xs text-red-300">Video title is required to generate.</p> : null}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="video-description">Video Description</Label>
+                  <Label htmlFor="video-description" className="text-slate-200">Video Description</Label>
                   <Textarea
                     id="video-description"
-                    placeholder="Describe your video..."
+                    placeholder="Describe your visual mood and pacing..."
                     rows={3}
                     value={videoDescription}
                     onChange={(e) => setVideoDescription(e.target.value)}
                   />
                 </div>
-                <Button
-                  onClick={handleGenerate}
-                  disabled={!canGenerate}
-                  className="w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-                  size="lg"
-                >
-                  <Sparkles className="mr-2 h-5 w-5" />
-                  {isGenerating ? "Generating..." : "Generate Video"}
+                <Button onClick={handleGenerate} disabled={!canGenerate} className="h-11 w-full rounded-xl text-sm font-semibold" size="lg">
+                  <Sparkles className={isGenerating ? "mr-2 h-5 w-5 animate-spin" : "mr-2 h-5 w-5"} />
+                  {isGenerating ? "Generating Video..." : "Generate Video"}
                 </Button>
-                {generationError ? <p className="text-sm text-red-500">{generationError}</p> : null}
+                {generationError ? <p className="text-sm text-red-300">{generationError}</p> : null}
               </CardContent>
             </Card>
 
-            {/* Preview */}
             <VideoPreview
               videoUrl={generatedVideoUrl}
               bannerUrl={generatedBannerUrl || localBannerPreviewUrl}
@@ -273,14 +268,12 @@ export default function GeneratePage() {
           </div>
         </div>
 
-        {/* Post-Generation Section */}
         {isGenerated && (
-          <div ref={previewSectionRef} className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Finalize Your LoFi Video</h2>
+          <section ref={previewSectionRef} className="space-y-6 pt-2">
+            <h2 className="text-2xl font-semibold text-slate-100 sm:text-3xl">Finalize And Publish</h2>
             <div className="grid gap-8 lg:grid-cols-2">
-              {/* Left - Video Preview */}
-              <Card className="overflow-hidden rounded-2xl border-border/50">
-                <div className="relative aspect-video bg-gradient-to-br from-purple-500/20 via-indigo-500/20 to-blue-500/20">
+              <Card className="overflow-hidden rounded-3xl border-sky-200/20 py-0">
+                <div className="relative aspect-video bg-black/70">
                   <video
                     src={generatedVideoUrl ?? undefined}
                     controls
@@ -288,51 +281,40 @@ export default function GeneratePage() {
                     poster={(generatedBannerUrl || localBannerPreviewUrl) ?? undefined}
                   />
                 </div>
-                <CardContent className="p-6 space-y-4">
+                <CardContent className="space-y-4 p-5">
                   <Input
                     placeholder="Video title"
                     value={videoTitle}
                     onChange={(e) => setVideoTitle(e.target.value)}
-                    className="text-lg font-semibold"
+                    className="text-base font-semibold"
                   />
-                  <div className="flex gap-3">
-                    <Button
-                      asChild
-                      className="flex-1 bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300"
-                    >
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Button asChild className="h-10 rounded-xl">
                       <a href={generatedVideoUrl ?? "#"} download>
                         <Download className="mr-2 h-4 w-4" />
                         Download
                       </a>
                     </Button>
-                    <Button
-                      variant="outline"
-                      className="flex-1 transition-all duration-300 hover:scale-105"
-                      onClick={handleGenerate}
-                      disabled={isGenerating}
-                    >
-                      <RefreshCw className="mr-2 h-4 w-4" />
+                    <Button variant="outline" className="h-10 rounded-xl" onClick={handleGenerate} disabled={isGenerating}>
+                      <RefreshCw className={isGenerating ? "mr-2 h-4 w-4 animate-spin" : "mr-2 h-4 w-4"} />
                       {isGenerating ? "Regenerating..." : "Regenerate"}
                     </Button>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Right - Details */}
-              <Card className="overflow-hidden rounded-2xl border-border/50">
-                <CardHeader>
-                  <CardTitle>Video Details</CardTitle>
+              <Card className="overflow-hidden rounded-3xl border-sky-200/20 py-0">
+                <CardHeader className="border-b border-white/10 pb-5 pt-6">
+                  <CardTitle className="text-lg text-slate-100">Video Details</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Rating */}
+                <CardContent className="space-y-6 p-5">
                   <div className="space-y-2">
-                    <Label>Rating</Label>
+                    <Label className="text-slate-200">Rating</Label>
                     <StarRating rating={rating} onRatingChange={setRating} />
                   </div>
 
-                  {/* Description */}
                   <div className="space-y-2">
-                    <Label htmlFor="description">Video Description</Label>
+                    <Label htmlFor="description" className="text-slate-200">Video Description</Label>
                     <Textarea
                       id="description"
                       placeholder="Describe your video..."
@@ -342,39 +324,24 @@ export default function GeneratePage() {
                     />
                   </div>
 
-                  {/* About Song */}
                   <div className="space-y-2">
-                    <Label htmlFor="about">About This Song</Label>
-                    <Textarea
-                      id="about"
-                      placeholder="Tell us about the music..."
-                      rows={3}
-                    />
+                    <Label htmlFor="about" className="text-slate-200">About This Song</Label>
+                    <Textarea id="about" placeholder="Tell us about the music..." rows={3} />
                   </div>
 
-                  {/* Comment */}
                   <div className="space-y-2">
-                    <Label htmlFor="comment">Comment</Label>
-                    <Input
-                      id="comment"
-                      placeholder="Add a comment..."
-                    />
+                    <Label htmlFor="comment" className="text-slate-200">Comment</Label>
+                    <Input id="comment" placeholder="Add a comment..." />
                   </div>
 
-                  {/* Publish Button */}
-                  <Button
-                    className="w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300 hover:scale-105"
-                    size="lg"
-                    onClick={handlePublishToLibrary}
-                    disabled={!generatedVideoUrl || isPublishing}
-                  >
+                  <Button className="h-11 w-full rounded-xl" size="lg" onClick={handlePublishToLibrary} disabled={!generatedVideoUrl || isPublishing}>
                     <Upload className="mr-2 h-5 w-5" />
                     {isPublishing ? "Publishing..." : "Publish to Library"}
                   </Button>
                 </CardContent>
               </Card>
             </div>
-          </div>
+          </section>
         )}
       </div>
     </DashboardLayout>

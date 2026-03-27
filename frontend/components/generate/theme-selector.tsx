@@ -19,7 +19,7 @@ const themes = [
 
 export function ThemeSelector({ selectedTheme, onSelectTheme }: ThemeSelectorProps) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
       {themes.map((theme) => {
         const isSelected = selectedTheme === theme.id
         return (
@@ -27,35 +27,27 @@ export function ThemeSelector({ selectedTheme, onSelectTheme }: ThemeSelectorPro
             key={theme.id}
             onClick={() => onSelectTheme(theme.id)}
             className={cn(
-              "relative group p-4 rounded-2xl border-2 text-left transition-all duration-300 hover:scale-105",
+              "elevate-hover group relative rounded-2xl border p-4 text-left transition-all",
               isSelected
-                ? "border-purple-500 bg-purple-500/10 shadow-lg shadow-purple-500/20"
-                : "border-border/50 bg-card hover:border-purple-500/50 hover:bg-purple-500/5"
+                ? "border-sky-300/45 bg-sky-300/10 shadow-[0_18px_35px_rgba(14,165,233,0.2)]"
+                : "border-sky-200/20 bg-slate-900/50 hover:border-sky-300/35",
             )}
           >
-            {/* Glow effect for selected */}
-            {isSelected && (
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/20 via-indigo-500/20 to-blue-500/20 blur-sm" />
-            )}
+            {isSelected ? (
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_14%_0%,rgba(103,232,249,0.16),transparent_46%)]" />
+            ) : null}
 
             <div className="relative">
               <div
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-lg mb-3 transition-colors",
-                  isSelected
-                    ? "bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500"
-                    : "bg-muted"
+                  "mb-3 flex h-10 w-10 items-center justify-center rounded-lg border",
+                  isSelected ? "border-sky-200/35 bg-sky-300/15" : "border-white/10 bg-slate-800/65",
                 )}
               >
-                <theme.icon
-                  className={cn(
-                    "h-5 w-5",
-                    isSelected ? "text-white" : "text-muted-foreground"
-                  )}
-                />
+                <theme.icon className={cn("h-5 w-5", isSelected ? "text-sky-100" : "text-slate-400")} />
               </div>
-              <h3 className="font-semibold text-sm">{theme.name}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{theme.mood}</p>
+              <h3 className="text-sm font-semibold text-slate-100">{theme.name}</h3>
+              <p className="mt-1 text-xs uppercase tracking-[0.1em] text-slate-400">{theme.mood}</p>
             </div>
           </button>
         )

@@ -46,7 +46,7 @@ export function UploadZone({ onFileSelect }: UploadZoneProps) {
 
   return (
     <Card
-      className="cursor-pointer overflow-hidden rounded-2xl border-2 border-dashed border-border/50 bg-card/50 transition-all duration-300 hover:border-purple-500/50 hover:bg-purple-500/5"
+      className="elevate-hover cursor-pointer overflow-hidden rounded-2xl border border-dashed border-sky-200/30 bg-slate-900/50 py-0"
       onClick={handleClick}
       role="button"
       tabIndex={0}
@@ -57,7 +57,7 @@ export function UploadZone({ onFileSelect }: UploadZoneProps) {
         }
       }}
     >
-      <CardContent className="p-8">
+      <CardContent className="p-7">
         <input
           ref={inputRef}
           type="file"
@@ -66,19 +66,17 @@ export function UploadZone({ onFileSelect }: UploadZoneProps) {
           onChange={handleFileChange}
         />
         <div className="flex flex-col items-center justify-center text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-blue-500/10 ring-1 ring-purple-500/20">
-            <Upload className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-sky-200/25 bg-slate-900/70">
+            <Upload className="h-7 w-7 text-sky-100" />
           </div>
-          <h3 className="mt-4 font-semibold">Drop your image here</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            or click to browse
-          </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+          <h3 className="mt-4 text-base font-semibold text-slate-100">Drop your image here</h3>
+          <p className="mt-1 text-sm text-slate-400">or click to browse</p>
+          <div className="mt-4 flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-slate-500">
             <Image className="h-4 w-4" />
-            <span>Only JPG, JPEG, PNG supported</span>
+            <span>JPG · JPEG · PNG</span>
           </div>
-          {fileName ? <p className="mt-2 text-xs text-green-600">{fileName}</p> : null}
-          {error ? <p className="mt-2 text-xs text-red-500">{error}</p> : null}
+          {fileName ? <p className="mt-2 text-xs text-emerald-300">{fileName}</p> : null}
+          {error ? <p className="mt-2 text-xs text-red-300">{error}</p> : null}
         </div>
       </CardContent>
     </Card>

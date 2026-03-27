@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/config/db"
 import { libraryItems } from "@/db/schema"
 import { getCurrentSession } from "@/lib/auth/session"
+import { normalizeMediaType } from "@/lib/media"
 
 export const runtime = "nodejs"
 
@@ -55,6 +56,7 @@ export async function GET() {
       songName: string | null
       thumbnailUrl: string | null
       videoUrl: string
+      mediaType: string | null
       rating: number
       isInLibrary: number
       createdAt: Date
@@ -72,6 +74,7 @@ export async function GET() {
           songName: libraryItems.songName,
           thumbnailUrl: libraryItems.thumbnailUrl,
           videoUrl: libraryItems.videoUrl,
+          mediaType: libraryItems.mediaType,
           rating: libraryItems.rating,
           isInLibrary: libraryItems.isInLibrary,
           createdAt: libraryItems.createdAt,
@@ -104,11 +107,21 @@ export async function GET() {
         ...item,
         description: null,
         tags: null,
+        mediaType: null,
         isInLibrary: 1,
       }))
     }
 
-    return NextResponse.json({ items })
+    return NextResponse.json({
+      items: items.map((item) => {
+        const mediaType = normalizeMediaType(item.mediaType, item.videoUrl)
+        return {
+          ...item,
+          mediaType,
+          mediaUrl: item.videoUrl,
+        }
+      }),
+    })
   } catch (error) {
     if (process.env.NODE_ENV !== "production") {
       console.error("GET /api/videos failed:", error)

@@ -1,4 +1,7 @@
-import { Sparkles, Video, Music } from "lucide-react"
+"use client"
+
+import { motion } from "framer-motion"
+import { Sparkles, Video, Music2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const features = [
@@ -6,61 +9,64 @@ const features = [
     icon: Sparkles,
     title: "AI Theme Matching",
     description:
-      "Our AI analyzes your music and automatically suggests the perfect anime theme that matches your track's mood and tempo.",
+      "The engine analyzes your song mood and style, then recommends polished visual scenes aligned to rhythm and vibe.",
   },
   {
     icon: Video,
     title: "Auto Video Generation",
     description:
-      "Simply upload your music and watch as our AI generates stunning, synchronized visuals with smooth animations and transitions.",
+      "Upload assets and render cinematic loops with smooth motion and presentation-ready outputs in one production flow.",
   },
   {
-    icon: Music,
-    title: "AI Song Generator",
+    icon: Music2,
+    title: "AI Song Studio",
     description:
-      "Write a prompt and our AI generates a matching visual scene and music audio, then combines them into a ready-to-share video tailored to your vibe.",
+      "Generate prompt-based tracks, preview with visuals, edit metadata, and publish instantly into your media library.",
   },
 ]
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-24 sm:py-32">
+    <section id="features" className="py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-balance">
-            Everything you need to create{" "}
-            <span className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-              stunning LoFi videos
-            </span>
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.55 }}
+          className="mx-auto max-w-2xl text-center"
+        >
+          <p className="text-xs uppercase tracking-[0.2em] text-sky-200/80">Capabilities</p>
+          <h2 className="mt-2 text-balance text-3xl font-semibold text-slate-100 sm:text-4xl">
+            Everything you need to ship
+            <span className="brand-gradient-text"> standout AI media</span>
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground text-pretty">
-            Powerful AI tools designed to transform your music into captivating visual experiences.
+          <p className="mt-4 text-base leading-relaxed text-slate-300/85 sm:text-lg">
+            A unified workflow for songs, visuals, and publishing, designed for speed without sacrificing presentation quality.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Features Grid */}
-        <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <Card
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((feature, index) => (
+            <motion.div
               key={feature.title}
-              className="group relative overflow-hidden rounded-2xl border-border/50 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/10"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.4, delay: index * 0.08 }}
             >
-              {/* Gradient border top */}
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500" />
-
-              <CardHeader>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-blue-500/10 ring-1 ring-purple-500/20 transition-all duration-300 group-hover:ring-purple-500/40">
-                  <feature.icon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <CardTitle className="text-xl">{feature.title}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base leading-relaxed">
-                  {feature.description}
-                </CardDescription>
-              </CardContent>
-            </Card>
+              <Card className="elevate-hover spotlight group h-full rounded-2xl border-sky-200/20 py-0">
+                <CardHeader className="border-b border-white/10 pb-4 pt-5">
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl border border-sky-200/20 bg-slate-900/60 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)]">
+                    <feature.icon className="h-5 w-5 text-sky-200" />
+                  </div>
+                  <CardTitle className="text-lg text-slate-100">{feature.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="p-5 pt-4">
+                  <CardDescription className="text-sm leading-relaxed text-slate-400">{feature.description}</CardDescription>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
       </div>

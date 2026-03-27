@@ -135,34 +135,37 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 lg:p-8 max-w-4xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold">Settings</h1>
-          <p className="mt-1 text-muted-foreground">
-            Manage your account settings and preferences.
-          </p>
-        </div>
+      <div className="space-y-6 p-4 sm:p-6 lg:p-8">
+        <section className="spotlight rounded-3xl border border-sky-200/20 bg-slate-900/55 p-6 shadow-[0_24px_45px_rgba(2,6,23,0.45)] backdrop-blur-xl sm:p-8">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.2em] text-sky-200/80">Account</p>
+              <h1 className="mt-2 text-3xl font-semibold text-slate-100 sm:text-4xl">Settings</h1>
+              <p className="mt-2 max-w-3xl text-sm text-slate-300/85 sm:text-base">
+                Manage profile, security, and appearance preferences in one polished control center.
+              </p>
+            </div>
+          </div>
+        </section>
 
         <div className="space-y-6">
-          {/* Profile Settings */}
-          <Card className="overflow-hidden rounded-2xl border-border/50">
-            <CardHeader>
+          <Card className="overflow-hidden rounded-3xl border-sky-200/20 py-0">
+            <CardHeader className="border-b border-white/10 pb-5 pt-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-blue-500/10 ring-1 ring-purple-500/20">
-                  <User className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-200/20 bg-slate-900/55">
+                  <User className="h-5 w-5 text-sky-200" />
                 </div>
                 <div>
-                  <CardTitle>Profile</CardTitle>
-                  <CardDescription>Manage your profile information</CardDescription>
+                  <CardTitle className="text-slate-100">Profile</CardTitle>
+                  <CardDescription className="text-slate-400">Manage your profile information</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-5">
               <form className="space-y-4" onSubmit={handleProfileUpdate}>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Name</Label>
+                    <Label htmlFor="name" className="text-slate-200">Name</Label>
                     <Input
                       id="name"
                       placeholder="Your name"
@@ -172,7 +175,7 @@ export default function SettingsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email" className="text-slate-200">Email</Label>
                     <Input
                       id="email"
                       type="email"
@@ -183,98 +186,91 @@ export default function SettingsPage() {
                     />
                   </div>
                 </div>
-                <Button
-                  type="submit"
-                  disabled={isLoadingProfile || isSavingProfile}
-                  className="bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300"
-                >
+                <Button type="submit" disabled={isLoadingProfile || isSavingProfile} className="h-10 rounded-xl">
                   {isSavingProfile ? "Saving..." : "Save Changes"}
                 </Button>
               </form>
             </CardContent>
           </Card>
 
-          {/* Notification Settings */}
-          <Card className="overflow-hidden rounded-2xl border-border/50">
-            <CardHeader>
+          <Card className="overflow-hidden rounded-3xl border-sky-200/20 py-0">
+            <CardHeader className="border-b border-white/10 pb-5 pt-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-blue-500/10 ring-1 ring-purple-500/20">
-                  <Bell className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-200/20 bg-slate-900/55">
+                  <Bell className="h-5 w-5 text-sky-200" />
                 </div>
                 <div>
-                  <CardTitle>Notifications</CardTitle>
-                  <CardDescription>Configure notification preferences</CardDescription>
+                  <CardTitle className="text-slate-100">Notifications</CardTitle>
+                  <CardDescription className="text-slate-400">Configure notification preferences</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Email Notifications</p>
-                  <p className="text-sm text-muted-foreground">Receive updates via email</p>
+                  <p className="font-medium text-slate-200">Email Notifications</p>
+                  <p className="text-sm text-slate-400">Receive updates via email</p>
                 </div>
                 <Switch defaultChecked />
               </div>
-              <Separator />
+              <Separator className="bg-white/10" />
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Video Complete Alerts</p>
-                  <p className="text-sm text-muted-foreground">Get notified when videos finish generating</p>
+                  <p className="font-medium text-slate-200">Video Complete Alerts</p>
+                  <p className="text-sm text-slate-400">Get notified when videos finish generating</p>
                 </div>
                 <Switch defaultChecked />
               </div>
-              <Separator />
+              <Separator className="bg-white/10" />
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Marketing Emails</p>
-                  <p className="text-sm text-muted-foreground">Receive news and updates</p>
+                  <p className="font-medium text-slate-200">Marketing Emails</p>
+                  <p className="text-sm text-slate-400">Receive news and updates</p>
                 </div>
                 <Switch />
               </div>
             </CardContent>
           </Card>
 
-          {/* Appearance */}
-          <Card className="overflow-hidden rounded-2xl border-border/50">
-            <CardHeader>
+          <Card className="overflow-hidden rounded-3xl border-sky-200/20 py-0">
+            <CardHeader className="border-b border-white/10 pb-5 pt-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-blue-500/10 ring-1 ring-purple-500/20">
-                  <Palette className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-200/20 bg-slate-900/55">
+                  <Palette className="h-5 w-5 text-sky-200" />
                 </div>
                 <div>
-                  <CardTitle>Appearance</CardTitle>
-                  <CardDescription>Customize how the app looks</CardDescription>
+                  <CardTitle className="text-slate-100">Appearance</CardTitle>
+                  <CardDescription className="text-slate-400">Customize how the app looks</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="p-5">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Dark Mode</p>
-                  <p className="text-sm text-muted-foreground">Use dark theme</p>
+                  <p className="font-medium text-slate-200">Dark Mode</p>
+                  <p className="text-sm text-slate-400">Use dark theme</p>
                 </div>
-                <Switch />
+                <Switch defaultChecked />
               </div>
             </CardContent>
           </Card>
 
-          {/* Security */}
-          <Card className="overflow-hidden rounded-2xl border-border/50">
-            <CardHeader>
+          <Card className="overflow-hidden rounded-3xl border-sky-200/20 py-0">
+            <CardHeader className="border-b border-white/10 pb-5 pt-6">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-blue-500/10 ring-1 ring-purple-500/20">
-                  <Shield className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-200/20 bg-slate-900/55">
+                  <Shield className="h-5 w-5 text-sky-200" />
                 </div>
                 <div>
-                  <CardTitle>Security</CardTitle>
-                  <CardDescription>Manage your security settings</CardDescription>
+                  <CardTitle className="text-slate-100">Security</CardTitle>
+                  <CardDescription className="text-slate-400">Manage your security settings</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-5">
               <form className="space-y-4" onSubmit={handlePasswordUpdate}>
                 <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
+                  <Label htmlFor="current-password" className="text-slate-200">Current Password</Label>
                   <Input
                     id="current-password"
                     type="password"
@@ -284,7 +280,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="new-password">New Password</Label>
+                    <Label htmlFor="new-password" className="text-slate-200">New Password</Label>
                     <Input
                       id="new-password"
                       type="password"
@@ -293,7 +289,7 @@ export default function SettingsPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm Password</Label>
+                    <Label htmlFor="confirm-password" className="text-slate-200">Confirm Password</Label>
                     <Input
                       id="confirm-password"
                       type="password"
@@ -302,12 +298,7 @@ export default function SettingsPage() {
                     />
                   </div>
                 </div>
-                <Button
-                  type="submit"
-                  variant="outline"
-                  disabled={isSavingPassword}
-                  className="transition-all duration-300 hover:scale-105"
-                >
+                <Button type="submit" variant="outline" disabled={isSavingPassword} className="h-10 rounded-xl">
                   {isSavingPassword ? "Updating..." : "Update Password"}
                 </Button>
               </form>

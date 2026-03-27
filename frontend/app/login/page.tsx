@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Mail, Lock, Eye, EyeOff } from "lucide-react"
@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { AuthCard } from "@/components/auth/auth-card"
 import { notifyAuthStateChanged } from "@/lib/auth/client"
 
-export default function LoginPage() {
+function LoginPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [showPassword, setShowPassword] = useState(false)
@@ -79,16 +79,12 @@ export default function LoginPage() {
   }
 
   return (
-    <AuthCard
-      title="Welcome Back"
-      description="Sign in to your account to continue"
-    >
+    <AuthCard title="Welcome Back" description="Sign in to continue your AI studio session.">
       <form className="space-y-4" onSubmit={onSubmit}>
-        {/* Email */}
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-slate-200">Email</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               id="email"
               type="email"
@@ -101,11 +97,10 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Password */}
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="text-slate-200">Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
@@ -118,18 +113,13 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-slate-200"
             >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
         </div>
 
-        {/* Remember Me */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Checkbox
@@ -137,46 +127,34 @@ export default function LoginPage() {
               checked={remember}
               onCheckedChange={(checked) => setRemember(checked === true)}
             />
-            <Label htmlFor="remember" className="text-sm font-normal cursor-pointer">
+            <Label htmlFor="remember" className="cursor-pointer text-sm font-normal text-slate-300">
               Remember me
             </Label>
           </div>
-          <Link
-            href="#"
-            className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400"
-          >
+          <Link href="#" className="text-sm text-sky-300 hover:text-sky-200">
             Forgot password?
           </Link>
         </div>
 
-        {/* Login Button */}
-        <Button
-          type="submit"
-          className="w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300 hover:scale-105"
-          disabled={isSubmitting}
-        >
+        <Button type="submit" className="h-10 w-full rounded-xl text-sm font-semibold" disabled={isSubmitting}>
           {isSubmitting ? "Signing in..." : "Login"}
         </Button>
 
-        {error ? (
-          <p className="text-sm text-red-500 text-center">{error}</p>
-        ) : null}
+        {error ? <p className="text-center text-sm text-red-300">{error}</p> : null}
 
-        {/* Divider */}
-        <div className="relative my-6">
+        <div className="relative my-5">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
+            <div className="w-full border-t border-white/10" />
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">Or</span>
+          <div className="relative flex justify-center text-[11px] uppercase tracking-[0.14em]">
+            <span className="rounded-md bg-slate-900 px-2 text-slate-500">Or continue with</span>
           </div>
         </div>
 
-        {/* Google Login */}
         <Button
           type="button"
           variant="outline"
-          className="w-full transition-all duration-300 hover:scale-105"
+          className="h-10 w-full rounded-xl"
           onClick={() => {
             window.location.href = "/api/auth/google/start"
           }}
@@ -202,17 +180,27 @@ export default function LoginPage() {
           Continue with Google
         </Button>
 
-        {/* Register Link */}
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-slate-400">
           {"Don't have an account? "}
-          <Link
-            href="/register"
-            className="font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400"
-          >
+          <Link href="/register" className="font-medium text-sky-300 hover:text-sky-200">
             Register
           </Link>
         </p>
       </form>
     </AuthCard>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <AuthCard title="Welcome Back" description="Loading sign-in form...">
+          <div className="h-56 animate-pulse rounded-2xl border border-white/10 bg-slate-900/45" />
+        </AuthCard>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   )
 }

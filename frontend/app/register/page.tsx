@@ -71,16 +71,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <AuthCard
-      title="Create Account"
-      description="Start creating amazing LoFi videos today"
-    >
+    <AuthCard title="Create Account" description="Build songs and videos from a premium AI workspace.">
       <form className="space-y-4" onSubmit={onSubmit}>
-        {/* Name */}
         <div className="space-y-2">
-          <Label htmlFor="name">Name</Label>
+          <Label htmlFor="name" className="text-slate-200">Name</Label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               id="name"
               type="text"
@@ -93,11 +89,10 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Email */}
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email" className="text-slate-200">Email</Label>
           <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               id="email"
               type="email"
@@ -110,11 +105,10 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Password */}
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="text-slate-200">Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
@@ -127,22 +121,17 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-slate-200"
             >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
         </div>
 
-        {/* Confirm Password */}
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword" className="text-slate-200">Confirm Password</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               id="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
@@ -155,45 +144,32 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-slate-200"
             >
-              {showConfirmPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
+              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
             </button>
           </div>
         </div>
 
-        {/* Register Button */}
-        <Button
-          type="submit"
-          className="w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 text-white hover:opacity-90 transition-all duration-300 hover:scale-105"
-          disabled={isSubmitting}
-        >
+        <Button type="submit" className="h-10 w-full rounded-xl text-sm font-semibold" disabled={isSubmitting}>
           {isSubmitting ? "Creating account..." : "Register"}
         </Button>
 
-        {error ? (
-          <p className="text-sm text-red-500 text-center">{error}</p>
-        ) : null}
+        {error ? <p className="text-center text-sm text-red-300">{error}</p> : null}
 
-        {/* Divider */}
-        <div className="relative my-6">
+        <div className="relative my-5">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
+            <div className="w-full border-t border-white/10" />
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">Or</span>
+          <div className="relative flex justify-center text-[11px] uppercase tracking-[0.14em]">
+            <span className="rounded-md bg-slate-900 px-2 text-slate-500">Or continue with</span>
           </div>
         </div>
 
-        {/* Google Register */}
         <Button
           type="button"
           variant="outline"
-          className="w-full transition-all duration-300 hover:scale-105"
+          className="h-10 w-full rounded-xl"
           onClick={() => {
             window.location.href = "/api/auth/google/start"
           }}
@@ -219,13 +195,9 @@ export default function RegisterPage() {
           Continue with Google
         </Button>
 
-        {/* Login Link */}
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-slate-400">
           Already have an account?{" "}
-          <Link
-            href="/login"
-            className="font-medium text-purple-600 hover:text-purple-700 dark:text-purple-400"
-          >
+          <Link href="/login" className="font-medium text-sky-300 hover:text-sky-200">
             Login
           </Link>
         </p>

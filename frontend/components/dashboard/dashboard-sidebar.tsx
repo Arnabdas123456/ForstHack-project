@@ -1,12 +1,13 @@
 "use client"
 
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { LayoutDashboard, Video, Library, Settings, LogOut, Music, Menu, X, Sparkles } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
+import { LayoutDashboard, Video, Library, Settings, LogOut, Home, Music2, Menu, X, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
-import { useState } from "react"
 import { toast } from "sonner"
 import { logoutUser } from "@/lib/auth/client"
 
@@ -23,6 +24,11 @@ export function DashboardSidebar() {
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const activeLabel = useMemo(() => {
+    const current = sidebarLinks.find((link) => pathname === link.href)
+    return current?.label || "Studio"
+  }, [pathname])
 
   async function handleLogout() {
     setIsLoggingOut(true)
@@ -42,103 +48,118 @@ export function DashboardSidebar() {
 
   return (
     <>
-      {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-16 px-4 border-b border-sidebar-border bg-sidebar">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500">
-            <Music className="h-4 w-4 text-white" />
+      <div className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-xl lg:hidden">
+        <div className="flex h-16 items-center justify-between px-4">
+          <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setMobileOpen(false)}>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl brand-gradient-bg">
+              <Music2 className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold tracking-wide text-slate-100">VibeVerse.ai</p>
+              <p className="text-[11px] text-slate-400">{activeLabel}</p>
+            </div>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setMobileOpen((prev) => !prev)}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            >
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </Button>
           </div>
-          <span className="text-lg font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-            VibeVerse.ai
-          </span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
         </div>
       </div>
 
-      {/* Mobile Overlay */}
-      {mobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-40 bg-background/80 backdrop-blur-sm"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {mobileOpen ? (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-slate-950/70 backdrop-blur-sm lg:hidden"
+            aria-label="Close navigation"
+            onClick={() => setMobileOpen(false)}
+          />
+        ) : null}
+      </AnimatePresence>
 
-      {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-40 h-full w-64 border-r border-sidebar-border bg-sidebar transition-transform duration-300 lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed bottom-0 left-0 top-0 z-50 w-[18.5rem] border-r border-white/10 bg-slate-950/70 px-4 pb-4 pt-4 backdrop-blur-xl transition-transform duration-300 lg:translate-x-0",
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex h-full flex-col">
-          {/* Logo */}
+        <div className="glass-panel panel-glow flex h-full flex-col overflow-hidden rounded-3xl p-3">
           <Link
-            href="/"
-            className="flex h-16 items-center gap-2 border-b border-sidebar-border px-6"
+            href="/dashboard"
+            className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-900/65 px-3 py-3"
             onClick={() => setMobileOpen(false)}
-            aria-label="Go to home page"
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500">
-              <Music className="h-5 w-5 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl brand-gradient-bg transition-transform duration-300 group-hover:scale-105">
+              <Music2 className="h-5 w-5" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-              VibeVerse.ai
-            </span>
+            <div>
+              <p className="text-[15px] font-semibold tracking-wide text-slate-100">VibeVerse.ai</p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-sky-200/80">AI Creative Studio</p>
+            </div>
           </Link>
 
-          {/* Navigation */}
-          <nav className="flex-1 space-y-1 p-4">
-            {sidebarLinks.map((link) => {
+          <nav className="mt-4 flex-1 space-y-1.5 px-1">
+            {sidebarLinks.map((link, index) => {
               const isActive = pathname === link.href
               return (
-                <Link
+                <motion.div
                   key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
-                    isActive
-                      ? "bg-gradient-to-r from-purple-500/10 via-indigo-500/10 to-blue-500/10 text-foreground"
-                      : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  )}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 + 0.08, duration: 0.25 }}
                 >
-                  <link.icon
+                  <Link
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
                     className={cn(
-                      "h-5 w-5",
-                      isActive && "text-purple-600 dark:text-purple-400"
+                      "group relative flex items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                      isActive
+                        ? "surface-border bg-sky-400/10 text-slate-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                        : "text-slate-300/90 hover:bg-slate-800/65 hover:text-slate-100",
                     )}
-                  />
-                  {link.label}
-                  {isActive && (
-                    <div className="ml-auto h-1.5 w-1.5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
-                  )}
-                </Link>
+                  >
+                    <span className={cn("rounded-lg p-1.5", isActive ? "bg-sky-300/15" : "bg-slate-800/60")}> 
+                      <link.icon className={cn("h-4 w-4", isActive ? "text-sky-200" : "text-slate-400 group-hover:text-sky-200")} />
+                    </span>
+                    <span>{link.label}</span>
+                    {isActive ? <span className="status-dot ml-auto" /> : null}
+                  </Link>
+                </motion.div>
               )
             })}
           </nav>
 
-          {/* Footer */}
-          <div className="border-t border-sidebar-border p-4">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs text-muted-foreground">Theme</span>
+          <div className="mt-4 space-y-3 border-t border-white/10 px-1 pt-4">
+            <div className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-900/55 px-3 py-2">
+              <span className="text-xs font-medium uppercase tracking-[0.15em] text-slate-400">Theme</span>
               <ThemeToggle />
             </div>
+
+            <Button asChild variant="outline" className="w-full justify-start gap-2 rounded-xl">
+              <Link href="/" onClick={() => setMobileOpen(false)}>
+                <Home className="h-4 w-4" />
+                Home
+              </Link>
+            </Button>
+
             <Button
-              variant="ghost"
-              className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive"
+              variant="outline"
+              className="w-full justify-start gap-2 rounded-xl"
               onClick={handleLogout}
               disabled={isLoggingOut}
             >
-              <LogOut className="h-5 w-5" />
+              <LogOut className="h-4 w-4" />
               {isLoggingOut ? "Logging out..." : "Logout"}
             </Button>
           </div>

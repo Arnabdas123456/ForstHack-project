@@ -5,6 +5,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/config/db"
 import { libraryItems } from "@/db/schema"
 import { getCurrentSession } from "@/lib/auth/session"
+import { normalizeMediaType } from "@/lib/media"
 import { createLibraryItemSchema } from "@/lib/validations/library"
 
 export const runtime = "nodejs"
@@ -58,6 +59,7 @@ export async function GET() {
       songName: string | null
       thumbnailUrl: string | null
       videoUrl: string
+      mediaType: string | null
       rating: number
       isInLibrary: number
       createdAt: Date
@@ -76,6 +78,7 @@ export async function GET() {
           songName: libraryItems.songName,
           thumbnailUrl: libraryItems.thumbnailUrl,
           videoUrl: libraryItems.videoUrl,
+          mediaType: libraryItems.mediaType,
           rating: libraryItems.rating,
           isInLibrary: libraryItems.isInLibrary,
           createdAt: libraryItems.createdAt,
@@ -110,11 +113,21 @@ export async function GET() {
         ...item,
         description: null,
         tags: null,
+        mediaType: null,
         isInLibrary: 1,
       }))
     }
 
-    return NextResponse.json({ items })
+    return NextResponse.json({
+      items: items.map((item) => {
+        const mediaType = normalizeMediaType(item.mediaType, item.videoUrl)
+        return {
+          ...item,
+          mediaType,
+          mediaUrl: item.videoUrl,
+        }
+      }),
+    })
   } catch (error) {
     if (process.env.NODE_ENV !== "production") {
       console.error("GET /api/library failed:", error)
@@ -145,6 +158,11 @@ export async function POST(request: Request) {
     }
 
     const libraryItemId = randomUUID()
+    const mediaUrl = parsed.data.mediaUrl || parsed.data.videoUrl
+    if (!mediaUrl) {
+      return NextResponse.json({ error: "Media URL is required" }, { status: 400 })
+    }
+    const mediaType = normalizeMediaType(parsed.data.mediaType, mediaUrl)
 
     try {
       await db.insert(libraryItems).values({
@@ -157,7 +175,8 @@ export async function POST(request: Request) {
         mood: parsed.data.mood || null,
         songName: parsed.data.songName || null,
         thumbnailUrl: parsed.data.thumbnailUrl || null,
-        videoUrl: parsed.data.videoUrl,
+        videoUrl: mediaUrl,
+        mediaType,
         rating: parsed.data.rating ?? 0,
         isInLibrary: parsed.data.isInLibrary === false ? 0 : 1,
       })
@@ -185,7 +204,7 @@ export async function POST(request: Request) {
           ${parsed.data.mood || null},
           ${parsed.data.songName || null},
           ${parsed.data.thumbnailUrl || null},
-          ${parsed.data.videoUrl},
+          ${mediaUrl},
           ${parsed.data.rating ?? 0}
         )
       `)
@@ -205,7 +224,9 @@ export async function POST(request: Request) {
           mood: parsed.data.mood || null,
           songName: parsed.data.songName || null,
           thumbnailUrl: parsed.data.thumbnailUrl || null,
-          videoUrl: parsed.data.videoUrl,
+          videoUrl: mediaUrl,
+          mediaUrl,
+          mediaType,
           rating: parsed.data.rating ?? 0,
           isInLibrary: parsed.data.isInLibrary === false ? 0 : 1,
           createdAt,

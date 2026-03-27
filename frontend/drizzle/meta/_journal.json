@@ -29,6 +29,13 @@
       "when": 1774600000000,
       "tag": "0003_ai_video_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1774648800000,
+      "tag": "0004_media_type",
+      "breakpoints": true
     }
   ]
 }

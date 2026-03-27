@@ -612,6 +612,7 @@ export async function POST(request: Request) {
           songName: null,
           thumbnailUrl: null,
           videoUrl: mediaUrl,
+          mediaType: "video",
           rating: 0,
           isInLibrary: 1,
         })
@@ -655,6 +656,8 @@ export async function POST(request: Request) {
         modelUsed: `${audioModelUsed}|${imageModelUsed}|${metadataModel}`,
         mood,
         videoUrl: mediaUrl,
+        mediaUrl,
+        mediaType: "video",
         isInLibrary: shouldSaveToLibrary,
         createdAt: createdAt.toISOString(),
       },

@@ -95,6 +95,7 @@ export const libraryItems = mysqlTable(
     songName: varchar("song_name", { length: 255 }),
     thumbnailUrl: varchar("thumbnail_url", { length: 1024 }),
     videoUrl: varchar("video_url", { length: 1024 }).notNull(),
+    mediaType: varchar("media_type", { length: 20 }).default("video").notNull(),
     rating: int("rating").default(0).notNull(),
     isInLibrary: int("is_in_library").default(1).notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),

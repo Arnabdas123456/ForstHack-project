@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Music, Twitter, Github, Youtube } from "lucide-react"
+import { Music2, Twitter, Github, Youtube } from "lucide-react"
 
 const socialLinks = [
   { href: "#", icon: Twitter, label: "Twitter" },
@@ -9,38 +9,38 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/40 bg-muted/30">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500">
-              <Music className="h-4 w-4 text-white" />
+    <footer className="border-t border-white/10 bg-slate-950/55 backdrop-blur-xl">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="glass-panel panel-glow rounded-3xl p-6 sm:p-8">
+          <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+            <Link href="/" className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl brand-gradient-bg">
+                <Music2 className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-[1.05rem] font-semibold text-slate-100">VibeVerse.ai</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-sky-200/70">AI Creative Platform</p>
+              </div>
+            </Link>
+
+            <div className="flex items-center gap-2">
+              {socialLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="elevate-hover flex h-10 w-10 items-center justify-center rounded-xl border border-sky-200/20 bg-slate-900/55 text-slate-300"
+                  aria-label={link.label}
+                >
+                  <link.icon className="h-4 w-4" />
+                </Link>
+              ))}
             </div>
-            <span className="text-lg font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-              VibeVerse.ai
-            </span>
-          </Link>
-
-          {/* Social Links */}
-          <div className="flex items-center gap-4">
-            {socialLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-muted-foreground transition-all duration-300 hover:bg-primary hover:text-primary-foreground hover:scale-105"
-                aria-label={link.label}
-              >
-                <link.icon className="h-5 w-5" />
-              </Link>
-            ))}
           </div>
-        </div>
 
-        <div className="mt-8 border-t border-border/40 pt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} VibeVerse.ai. All rights reserved.
-          </p>
+          <div className="mt-6 border-t border-white/10 pt-5 text-xs text-slate-400 sm:flex sm:items-center sm:justify-between">
+            <p>&copy; {new Date().getFullYear()} VibeVerse.ai. All rights reserved.</p>
+            <p className="mt-1 sm:mt-0">Built for creators shipping cinematic AI experiences.</p>
+          </div>
         </div>
       </div>
     </footer>

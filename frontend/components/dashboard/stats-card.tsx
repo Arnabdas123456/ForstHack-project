@@ -10,20 +10,16 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, icon: Icon, description }: StatsCardProps) {
   return (
-    <Card className="overflow-hidden rounded-2xl border-border/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/5 hover:scale-105">
-      <CardContent className="p-6">
+    <Card className="elevate-hover overflow-hidden rounded-2xl border-sky-200/20 py-0">
+      <CardContent className="p-5">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="mt-2 text-3xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-              {value}
-            </p>
-            {description && (
-              <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-            )}
+            <p className="text-xs uppercase tracking-[0.15em] text-slate-400">{title}</p>
+            <p className="mt-2 text-3xl font-semibold text-slate-100">{value}</p>
+            {description ? <p className="mt-1 text-xs text-slate-500">{description}</p> : null}
           </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/10 via-indigo-500/10 to-blue-500/10 ring-1 ring-purple-500/20">
-            <Icon className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-sky-200/20 bg-slate-900/60">
+            <Icon className="h-5 w-5 text-sky-200" />
           </div>
         </div>
       </CardContent>
