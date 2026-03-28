@@ -42,7 +42,7 @@ export function HeroSection() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link href="/register">
+            <Link href="/generate">
               <Button size="lg" className="h-11 rounded-xl px-5 text-sm font-semibold">
                 Start Creating
                 <ArrowRight className="h-4 w-4" />
