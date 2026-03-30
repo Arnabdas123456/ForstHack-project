@@ -94,7 +94,7 @@ export default function GeneratePage() {
       const nextBannerUrl = payload.banner_url
         ? normalizeUrl(payload.banner_url)
         : localBannerPreviewUrl
-      const uploadToastId = toast.loading("Saving generated video to UploadThing...")
+      const uploadToastId = toast.loading("Saving generated video to Cloud...")
 
       let storedVideoUrl = nextVideoUrl
       try {
@@ -114,7 +114,7 @@ export default function GeneratePage() {
         }
 
         if (!uploadResponse.ok || !uploadPayload.url) {
-          throw new Error(uploadPayload.error || "Unable to store video in UploadThing")
+          throw new Error(uploadPayload.error || "Unable to store video in Cloud")
         }
 
         storedVideoUrl = uploadPayload.url
